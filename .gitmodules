@@ -1,0 +1,18 @@
+[submodule "busybox"]
+	path = busybox
+	url = https://github.com/cpuex2019-yokyo/busybox
+	branch = master
+[submodule "linux"]
+	path = linux
+	url = https://github.com/cpuex2019-yokyo/linux
+	branch = master
+[submodule "qemu"]
+	path = qemu
+	url = https://github.com/cpuex2019-yokyo/qemu
+	branch = master
+[submodule "opensbi"]
+	path = opensbi
+	url = https://github.com/riscv/opensbi
+[submodule "riscv-gnu-toolchain"]
+	path = riscv-gnu-toolchain
+	url = https://github.com/riscv/riscv-gnu-toolchain
