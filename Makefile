@@ -1,8 +1,7 @@
 default: run
 
-
 update:
-	git submodule update --recursive
+	git submodule update --remote
 
 configure:
 	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- menuconfig
@@ -12,7 +11,7 @@ linux/.config: conf/linux.config
 	cp conf/linux.config linux/.config
 
 linux/arch/riscv/boot/Image: linux/.config
-	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- arch/riscv/boot/Image -j 4  
+	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- vmlinux arch/riscv/boot/Image -j 4  
 
 busybox/.config: conf/busybox.config
 	cp conf/busybox.config busybox/.config
@@ -24,7 +23,7 @@ busybox/rootfs.img:	 busybox/.config busybox/_install
 	./busybox/scripts/buildfs.sh
 
 opensbi/build/platform/qemu/virt/firmware/fw_payload.elf: linux/arch/riscv/boot/Image
-	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image
+	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 PLATFORM_RISCV_ISA=rv32ima FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image
 
 # Main utils
 run: busybox/rootfs.img opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
@@ -36,8 +35,9 @@ run: busybox/rootfs.img opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
 
 install:
 	cd qemu; ./configure --target-list=riscv32-softmmu; make -j 4; sudo make install
-	cd riscv-gnu-toolchain; ./configure --prefix=/opt/riscv32 --with-arch=rv32gc --with-abi=ilp32; make newlib -j 4; make linux -j 4
+	cd riscv-gnu-toolchain; ./configure --prefix=/opt/riscv32 --with-arch=rv32ima --with-abi=ilp32; make newlib -j 4; make linux -j 4
 
 clean:
 	cd busybox; rm rootfs.img; make clean
 	cd linux; make clean ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu-
+	cd opensbi; make clean
