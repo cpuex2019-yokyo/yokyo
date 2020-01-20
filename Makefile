@@ -11,7 +11,7 @@ linux/.config: conf/linux.config
 	cp conf/linux.config linux/.config
 
 linux/arch/riscv/boot/Image: linux/.config
-	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- vmlinux arch/riscv/boot/Image -j 4  
+	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- vmlinux Image -j 4  
 
 busybox/.config: conf/busybox.config
 	cp conf/busybox.config busybox/.config
@@ -39,5 +39,5 @@ install:
 
 clean:
 	cd busybox; rm rootfs.img; make clean
-	cd linux; make clean ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu-
+	cd linux; make clean ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu-; rm arch/riscv/boot/Image # TODO
 	cd opensbi; make clean
