@@ -16,3 +16,6 @@
 [submodule "riscv-gnu-toolchain"]
 	path = riscv-gnu-toolchain
 	url = https://github.com/riscv/riscv-gnu-toolchain
+[submodule "xv6-riscv"]
+	path = xv6-riscv
+	url = https://github.com/mit-pdos/xv6-riscv.git
