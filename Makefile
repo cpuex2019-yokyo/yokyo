@@ -22,13 +22,16 @@ busybox/_install: busybox/.config
 busybox/rootfs.img:	 busybox/.config busybox/_install
 	./busybox/scripts/buildfs.sh
 
-opensbi/build/platform/qemu/virt/firmware/fw_payload.elf: linux/arch/riscv/boot/Image
-	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 PLATFORM_RISCV_ISA=rv32ima FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image
+build:
+	mkdir build
+
+build/linux/platform/qemu/virt/firmware/fw_payload.elf: linux/arch/riscv/boot/Image build
+	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 PLATFORM_RISCV_ISA=rv32ima FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image O=../build/linux
 
 # Main utils
-run: busybox/rootfs.img opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
-	sudo qemu-system-riscv32 -nographic -machine virt\
-		-kernel opensbi/build/platform/qemu/virt/firmware/fw_payload.elf \
+run: busybox/rootfs.img build/linux/platform/qemu/virt/firmware/fw_payload.elf
+	sudo qemu-system-riscv32 -nographic -machine virt \
+		-kernel build/linux/platform/qemu/virt/firmware/fw_payload.elf \
 		-append "root=/dev/vda rw console=ttyS0" \
 		-drive file=busybox/rootfs.img,format=raw,id=hd0 \
 		-device virtio-blk-device,drive=hd0
@@ -38,6 +41,8 @@ install:
 	cd riscv-gnu-toolchain; ./configure --prefix=/opt/riscv32 --with-arch=rv32ima --with-abi=ilp32; make newlib -j 4; make linux -j 4
 
 clean:
+	rm -rf build
 	cd busybox; rm rootfs.img; make clean
-	cd linux; make clean ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu-; rm arch/riscv/boot/Image # TODO
+	cd linux; make clean ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu-;
+	cd linux; rm arch/riscv/boot/Image
 	cd opensbi; make clean
