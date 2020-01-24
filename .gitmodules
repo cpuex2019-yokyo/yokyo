@@ -18,4 +18,4 @@
 	url = https://github.com/riscv/riscv-gnu-toolchain
 [submodule "xv6-riscv"]
 	path = xv6-riscv
-	url = https://github.com/mit-pdos/xv6-riscv.git
+	url = https://github.com/cpuex2019-yokyo/xv6-riscv
