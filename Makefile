@@ -4,6 +4,7 @@ update:
 	git submodule update --remote
 
 configure:
+	cp conf/linux.config linux/.config
 	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- menuconfig
 	cp linux/.config conf/linux.config
 
@@ -17,7 +18,7 @@ busybox/.config: conf/busybox.config
 	cp conf/busybox.config busybox/.config
 
 busybox/_install: busybox/.config
-	cd busybox; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- install
+	cd busybox; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- CFLAGS="-mabi=ilp32 -march=rv32ima" install
 
 busybox/rootfs.img:	 busybox/.config busybox/_install
 	./busybox/scripts/buildfs.sh
@@ -35,6 +36,14 @@ run: busybox/rootfs.img build/linux/platform/qemu/virt/firmware/fw_payload.elf
 		-append "root=/dev/vda rw console=ttyS0" \
 		-drive file=busybox/rootfs.img,format=raw,id=hd0 \
 		-device virtio-blk-device,drive=hd0
+
+run-gdb: busybox/rootfs.img build/linux/platform/qemu/virt/firmware/fw_payload.elf
+	sudo qemu-system-riscv32 -nographic -machine virt \
+		-kernel build/linux/platform/qemu/virt/firmware/fw_payload.elf \
+		-append "root=/dev/vda rw console=ttyS0" \
+		-drive file=busybox/rootfs.img,format=raw,id=hd0 \
+		-device virtio-blk-device,drive=hd0 \
+		-S -gdb tcp::11451
 
 install:
 	cd qemu; ./configure --target-list=riscv32-softmmu; make -j 4; sudo make install
