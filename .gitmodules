@@ -9,7 +9,7 @@
 [submodule "qemu"]
 	path = qemu
 	url = https://github.com/cpuex2019-yokyo/qemu
-	branch = debug/rv32imasu
+	branch = master
 [submodule "opensbi"]
 	path = opensbi
 	url = https://github.com/riscv/opensbi
