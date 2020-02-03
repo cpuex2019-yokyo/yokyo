@@ -45,7 +45,7 @@ run-mem: build/initramfs.cpio.gz opensbi/build/platform/qemu/virt/firmware/fw_pa
 		-initrd build/initramfs.cpio.gz \
 		-append "console=ttyS0" \
 
-run-gdb: build/initramfs.cpio.gz build/linux/platform/qemu/virt/firmware/fw_payload.elf
+run-gdb: build/initramfs.cpio.gz opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
 	sudo qemu-system-riscv32 -nographic -machine virt \
 		-kernel build/linux/platform/qemu/virt/firmware/fw_payload.elf \
 		-append "root=/dev/vda rw console=ttyS0" \
