@@ -20,3 +20,7 @@
 	path = xv6-riscv
 	url = https://github.com/cpuex2019-yokyo/xv6-riscv
     branch = master
+[submodule "core"]
+	path = core
+	url = https://github.com/cpuex2019-yokyo/core
+    branch = master
