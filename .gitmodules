@@ -24,3 +24,7 @@
 	path = core
 	url = https://github.com/cpuex2019-yokyo/core
     branch = master
+[submodule "toolchain"]
+	path = toolchain
+	url = https://github.com/cpuex2019-yokyo/toolchain
+    branch = master
