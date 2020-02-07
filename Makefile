@@ -25,8 +25,43 @@ busybox/rootfs.img:	 busybox/.config busybox/_install busybox/scripts/templates
 
 build/initramfs.cpio.gz: build busybox/rootfs.img
 
+toolchain/xv6_bootloader/build/bootloader:
+	cd toolchain/xv6_bootloader; make
+
+xv6_coe: build/xv6/kernel.coe build/xv6/fs.coe build/xv6/bootloader.coe
+
+xv6_dist: xv6_coe
+	cd build; zip -r xv6_deploy.zip xv6
+
+build/xv6/bootloader.bin: toolchain/xv6_bootloader/build/bootloader build/xv6
+	cp toolchain/xv6_bootloader/build/bootloader build/xv6/bootloader.bin
+
+build/xv6/bootloader.coe: build/xv6/bootloader.bin build/xv6
+	yokyo_bin2coe build/xv6/bootloader.bin > build/xv6/bootloader.coe
+
+xv6-riscv/fs.img: 
+	cd xv6-riscv; make fs.img
+
+build/xv6/fs.bin: xv6-riscv/fs.img build/xv6
+	cp xv6-riscv/fs.img build/xv6/fs.bin
+
+build/xv6/fs.coe: build/xv6/fs.bin build/xv6
+	yokyo_bin2coe build/xv6/fs.bin > build/xv6/fs.coe
+
+xv6-riscv/kernel/kernel:
+	cd xv6-riscv; make kernel/kernel
+
+build/xv6/kernel.bin: xv6-riscv/kernel/kernel build/xv6
+	cp xv6-riscv/kernel/kernel build/xv6/kernel.bin
+
+build/xv6/kernel.coe: build/xv6/kernel.bin build/xv6
+	yokyo_bin2coe build/xv6/kernel.bin > build/xv6/kernel.coe
+
 build:
-	mkdir build
+	mkdir -p build
+
+build/xv6:
+	mkdir -p build/xv6
 
 opensbi/build/platform/qemu/virt/firmware/fw_payload.elf: linux/arch/riscv/boot/Image build
 	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 PLATFORM_RISCV_ISA=rv32ima FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image
