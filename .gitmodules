@@ -12,7 +12,8 @@
 	branch = master
 [submodule "opensbi"]
 	path = opensbi
-	url = https://github.com/riscv/opensbi
+	url = https://github.com/cpuex2019-yokyo/opensbi
+    branch = master
 [submodule "riscv-gnu-toolchain"]
 	path = riscv-gnu-toolchain
 	url = https://github.com/riscv/riscv-gnu-toolchain
