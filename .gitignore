@@ -1,2 +1,4 @@
 build/
+trace.log
 .gdb_history
+trace-events
