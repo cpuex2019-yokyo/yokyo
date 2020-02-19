@@ -85,7 +85,7 @@ build/linux/kernel.img.bin: build/linux/kernel.bin
 	yokyo_bin2flash build/linux/kernel.bin build/linux/kernel.img.bin 512
 
 # tests
-run-linux: busybox/initramfs.cpio.gz opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
+run-linux: build/linux/kernel.elf
 	sudo qemu-system-riscv32 \
 		-nographic \
 		-smp 1 \
@@ -94,7 +94,7 @@ run-linux: busybox/initramfs.cpio.gz opensbi/build/platform/qemu/virt/firmware/f
 		-kernel opensbi/build/platform/qemu/virt/firmware/fw_payload.elf \
 		-trace events=trace-events,file=trace.log
 
-run-linux-gdb: busybox/initramfs.cpio.gz opensbi/build/platform/qemu/virt/firmware/fw_payload.elf
+run-linux-gdb: build/linux/kernel.elf
 	sudo qemu-system-riscv32 \
 		-nographic \
 		-smp 1 \
@@ -152,7 +152,8 @@ run-bootloader: build/bootloader/qemu.elf build/linux/kernel.img.bin
 		-nographic \
 		-kernel build/bootloader/qemu.elf \
 		-drive file=build/linux/kernel.img.bin,if=none,format=raw,id=x0 \
-		-device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+		-device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0 \
+		-trace events=trace-events,file=trace.log
 
 run-bootloader-gdb: build/bootloader/qemu.elf build/linux/kernel.img.bin
 	 qemu-system-riscv32 \
