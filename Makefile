@@ -173,7 +173,7 @@ busybox/.config: conf/busybox.config
 busybox/_install: busybox/.config
 	cd busybox; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- CFLAGS="-mabi=ilp32 -march=rv32ima" install
 
-busybox/initramfs.cpio.gz busybox/rootfs.img: busybox/.config busybox/_install busybox/scripts
+busybox/initramfs.cpio.gz busybox/rootfs.img: busybox/.config busybox/_install busybox/scripts/buildfs.sh
 	./busybox/scripts/buildfs.sh
 
 # utils
