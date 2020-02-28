@@ -61,10 +61,14 @@ build/linux:
 linuxdist: build/linux/kernel.img.bin
 	cd build; zip -r linux.zip linux
 
-linux/arch/riscv/boot/Image: linux busybox/initramfs.cpio.gz
+FORCE1:
+
+linux/arch/riscv/boot/Image: FORCE1 linux/ busybox/initramfs.cpio.gz
 	cd linux; make ARCH=riscv CROSS_COMPILE=riscv32-unknown-linux-gnu- vmlinux Image -j 4
 
-opensbi/build/platform/qemu/virt/firmware/fw_payload.elf: linux/arch/riscv/boot/Image
+FORCE2:
+
+opensbi/build/platform/qemu/virt/firmware/fw_payload.elf: FORCE2 linux/arch/riscv/boot/Image
 	cd opensbi; make CROSS_COMPILE=riscv32-unknown-elf- PLATFORM=qemu/virt PLATFORM_RISCV_ABI=ilp32 PLATFORM_RISCV_ISA=rv32ima FW_PAYLOAD_PATH=../linux/arch/riscv/boot/Image
 
 linux/.config: conf/linux.config
@@ -122,7 +126,12 @@ build/bootloader:
 bootloaderdist: build/bootloader/qemu.coe build/bootloader/board.coe
 	cd build; zip -r bootloader.zip bootloader
 
-toolchain/bootloader/linux/build/bootloader_{qemu,board}.elf: toolchain/bootloader/linux
+FORCE3:
+
+toolchain/bootloader/linux/build/bootloader_qemu.elf: toolchain/bootloader/linux FORCE3
+	cd toolchain/bootloader/linux; make
+
+toolchain/bootloader/linux/build/bootloader_board.elf: toolchain/bootloader/linux FORCE3
 	cd toolchain/bootloader/linux; make
 
 build/bootloader/qemu.elf: toolchain/bootloader/linux/build/bootloader_qemu.elf build/bootloader
